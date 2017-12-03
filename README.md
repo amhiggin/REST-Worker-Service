@@ -2,6 +2,7 @@
 A REST system. A management node delegates work to varying numbers of worker nodes, in the form of files from commits to a Github repository.
 
 ## Dependencies
+* Radon, used to calculate cyclomatic complexity: http://radon.readthedocs.io/en/latest/api.html#module-radon.complexity
 
 ## Extra Notes
 * The original implementation of this project was first attempted in Haskell, with heavy influence from Prof. Stephen Barrett's use-cloudhaskell project (available at http://www.bitbucket.org/esjmb/use-cloudhaskell).
