@@ -11,7 +11,7 @@
 -- operates. A docker-compose.yml file is provided that suppo rts the launching of a master and set of workers.
 
 module Lib
-    ( someFunc
+    ( someFunc        -- referenced by Main.hs as the function to run
     ) where
 
 -- These imports are required for Cloud Haskell
@@ -22,14 +22,19 @@ import           Control.Distributed.Process.Node                   (initRemoteT
 import           Control.Monad
 import           Network.Transport.TCP                              (createTransport,
                                                                      defaultTCPParameters)
-import           PrimeFactors
+import           CyclomaticComplexity
 import           System.Environment                                 (getArgs)
 import           System.Exit
+import 	         Argon
+import           Git -- maybe remove
 
 -- this is the work we get workers to do. It could be anything we want. To keep things simple, we'll calculate the
 -- number of prime factors for the integer passed.
 doWork :: Integer -> Integer
-doWork = numPrimeFactors
+doWork = calculateCyclomaticComplexity
+
+
+
 
 -- | worker function.
 -- This is the function that is called to launch a worker. It loops forever, asking for work, reading its message queue
@@ -106,6 +111,11 @@ sumIntegers = go 0
 
 rtable :: RemoteTable
 rtable = Lib.__remoteTable initRemoteTable
+
+
+
+
+
 
 -- | This is the entrypoint for the program. We deal with program arguments and launch up the cloud haskell code from
 -- here.
