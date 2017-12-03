@@ -5,10 +5,6 @@ import os, sys, requests
 
 
 class Worker(object):
-    pass
-
-
-class Worker:
 
     def __init__(self):
         # do any required initialisation
