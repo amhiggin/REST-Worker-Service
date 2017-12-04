@@ -5,13 +5,24 @@ import time, os, sys
 
 from git import Repo
 from os import walk
+from radon.cli import Config
+from radon.complexity import cc_rank, SCORE
 
-GITHUB_REPO_COMMITS_URL = "http://api.github.com/repos/amhiggin/DistributedFileSystem/commits"
-GITHUB_REPO_URL = "https://github.com/amhiggin/DistributedFileSystem/"
+GITHUB_REPO_COMMITS_URL = "http://api.github.com/repos/amhiggin/WebProxyServer/commits"
+GITHUB_REPO_URL = "https://github.com/amhiggin/WebProxyServer"
 
 
 def print_to_console(node_name, message):
     print '{0}: {1}'.format(node_name, message)
+
+
+def get_CCHarvester_config():
+    # Obtained from https://github.com/rubik/radon/blob/master/radon/cli/__init__.py#L16
+    return Config(
+        min='A', max='F', show_complexity=True, average=False,
+        exclude=None, ignore=None, order=SCORE, json=False, no_assert=False,
+        show_closures=False, total_average=False, xml=False, codeclimate=False
+    )
 
 
 def get_git_repository(repo_path):

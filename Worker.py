@@ -59,16 +59,14 @@ class Worker(object):
         utils.print_to_console('Worker' + WORKER_ID, 'Calculating complexity for file {0}'.format(file_name))
         file_complexity = 0
         file = open(file_name, 'r')
-        results = CCHarvester(file_name).gobble(file)
+        results = CCHarvester(file_name, utils.get_CCHarvester_config()).gobble(file)
 
         for result in results:
             print result.complexity
             file_complexity += int(result.complexity)
 
-        average_complexity = utils.calculate_average(file_complexity, len(results))
         utils.print_to_console('Worker' + WORKER_ID, "Total complexity of {0}: {1}".format(file_name, str(file_complexity)))
-        utils.print_to_console('Worker' + WORKER_ID, "Average complexity of {0}: {1}".format(file_name, str(average_complexity)))
-        return average_complexity
+        return file_complexity
 
 
 def register_worker():
