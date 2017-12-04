@@ -1,15 +1,20 @@
 import threading, os, sys
 from flask_restful import Resource, Api, reqparse
-from flask import Flask, request
+from flask import Flask, request, jsonify
 import Utilities as utils
+import json
 
 NUM_WORKERS = 0
 ROOT_DIR = "ManagerDir"
+repository = None
+
+# working variables
 commits_list = {}
 current_commit_index = 0
-work_remaining = {}
-total_complexity = []
-repository = None
+
+# results variables
+complexity_results = []
+total_time = 0.0
 
 app = Flask(__name__)
 api = Api(app)
@@ -20,23 +25,28 @@ class Manager(Resource):
         global current_commit_index, commits_list
 
         utils.print_to_console("Manager", "In get method")
-        commit = utils.get_next_piece_of_work(commits_list, current_commit_index)
         running = utils.get_are_files_remaining(commits_list, current_commit_index)
-        current_commit_index += 1
-
-        if current_commit_index >= len(commits_list):
-            utils.print_to_console("There are no more commits", "Manager")
+        if not running:
+            utils.print_to_console("Manager", "There are no more commits. Running == False now.")
+            utils.output_results(NUM_WORKERS, total_time, complexity_results)
+            return {"commit": -1, "running": False}
+        else:
+            commit = utils.get_next_piece_of_work(commits_list, current_commit_index)
+            current_commit_index += 1
 
         return {"commit": commit, "running": running}
 
 
     def post(self):
+        global total_time
+
         utils.print_to_console("Manager", 'In post method')
         work_response = request.get_json()
-        file_names = work_response.json()['file_names']
         average_complexity = work_response.json()['average_complexity']
+        time_taken = work_response.json()['time_taken']
         # record this in our array of results for each commit
-        total_complexity.append(average_complexity)
+        complexity_results.append(average_complexity)
+        total_time += time_taken
 
 
 class RegisterWorker(Resource):
@@ -46,9 +56,11 @@ class RegisterWorker(Resource):
         utils.print_to_console("RegisterWorker", 'In get method of worker registration')
         registration_request = request.get_json()['registration_request']
         if registration_request is True:
+            response = {"worker_id": NUM_WORKERS}
             NUM_WORKERS += 1
-            return {"worker_id": NUM_WORKERS}
-        return {"worker_id": None}
+        else:
+            response = {"worker_id": None}
+        return response
 
 
 # Add url handles for registration of worker, and general worker requests
@@ -58,17 +70,14 @@ api.add_resource(RegisterWorker, '/register_worker')
 
 # Requires the number of workers as arg[1]
 if __name__ == '__main__':
-    global commits_list, NUM_WORKERS, repository
+    global commits_list, NUM_WORKERS, repository, time_taken
+
     # get repo set up first
     repository = utils.get_git_repository(ROOT_DIR)
     commits_list = utils.get_commits_as_list(ROOT_DIR)
+    utils.print_to_console("Manager", "Loaded commits on manager side")
 
+    # wait for required number of workers to join before doing anything else
     app.run(host='127.0.0.1', port=5000)
     while NUM_WORKERS < sys.argv[1]:
-        pass # wait for required number of workers to join
-
-    # Now start timing
-    start_time = utils.get_time()
-    # insert work here
-    end_time = utils.get_time()
-    utils.output_results(NUM_WORKERS, start_time, end_time)
+        pass

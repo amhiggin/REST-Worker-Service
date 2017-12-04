@@ -19,7 +19,8 @@ class Worker(object):
     def __init__(self):
         self.running = True
         self.worker_id = register_worker()
-        self.repo = utils.get_git_repository(ROOT_DIR + WORKER_ID)
+        self.root_dir = ROOT_DIR + WORKER_ID
+        self.repo = utils.get_git_repository(self.root_dir)
 
     # fetches work from the manager
     def fetch_work(self):
@@ -35,16 +36,23 @@ class Worker(object):
         utils.print_to_console("Worker" + WORKER_ID, 'The manager instructed us to terminate')
 
     def do_work(self, commit):
+        # start timing
+        start_time = utils.get_time()
+
         utils.print_to_console('Worker' + WORKER_ID, 'In do_work method')
         total_complexity = 0
         num_files_assessed = 0
-        file_names = utils.get_files_at_commit(commit) # TODO implement
+        file_names = utils.get_files_at_commit(commit, self.root_dir) # TODO implement
         for file_name in file_names:
             total_complexity += self.calculate_file_complexity(file_name)
             num_files_assessed += 1
         average_complexity = utils.calculate_average(total_complexity, num_files_assessed)
 
-        return {'file_names': file_names, "average_complexity": average_complexity}
+        # finish timing
+        end_time = utils.get_time()
+
+        time_taken = end_time - start_time
+        return {'file_names': file_names, "average_complexity": average_complexity, "time_taken": time_taken}
 
 
     def calculate_file_complexity(self, file_name):

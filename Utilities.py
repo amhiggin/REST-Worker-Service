@@ -13,6 +13,7 @@ GITHUB_REPO_URL = "https://github.com/amhiggin/DistributedFileSystem/"
 def print_to_console(node_name, message):
     print '{0}: {1}'.format(node_name, message)
 
+
 def get_git_repository(repo_path):
     print 'In clone repository method: required to clone {0}'.format(GITHUB_REPO_URL)
     if not os.path.exists(repo_path):
@@ -23,27 +24,36 @@ def get_git_repository(repo_path):
         repo = Repo(repo_path)
     return repo
 
+
 def get_commits_as_list(repo_path):
     repo = Repo(repo_path)
     commit_list = []
     for commit in repo.iter_commits():
-        commit_list.append(commit)
+        commit_list.append(str(commit))
         print 'Adding commit {0}'.format(str(commit))
     return commit_list
+
 
 def calculate_average(total_complexity, num_results_assessed):
     return (total_complexity / num_results_assessed)
 
+
 def get_next_piece_of_work(commits_list, current_commit_index):
     print 'Fetching next segment of repository'
+    print 'Commits list has {0} commits in it, we are going to get number {1}'.format(len(commits_list), str(current_commit_index))
+
     return commits_list[current_commit_index]
+
 
 def get_are_files_remaining(commits_list, current_commit_index):
     print 'Checking whether there are any files left to process'
     if current_commit_index >= len(commits_list):
+        print 'There are no files remaining: returning False'
         return False
     else:
+        print 'There are still files left: returning True'
         return True
+
 
 def get_files_at_commit(commit, repo_path):
     print 'In get_files_at_commit method. Getting commit number {0}'.format(commit)
@@ -72,9 +82,14 @@ def get_time():
     return time.time()
 
 
-def output_results(num_workers, start_time, end_time):
-    time_taken = end_time - start_time
-    result = 'Workers: {0} \t Time: {1}'.format(num_workers, time_taken)
+def output_results(num_workers, total_time, complexity_results):
+    print_to_console("Manager", "Outputting final results for complexity calculation")
+    total_complexity = 0
+    for result in complexity_results:
+        total_complexity += result[0]
+    average_complexity = calculate_average(total_complexity, len(complexity_results))
+
+    result = 'Workers: {0} \tAverage Complexity: {1} \tTime: {2}'.format(num_workers, average_complexity, total_time)
     print result
     # output as appendage to file
     with open('complexity_results.txt', 'a') as output_file:
