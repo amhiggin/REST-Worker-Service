@@ -1,5 +1,6 @@
 # RESTServiceSystem
 A REST system. A management node delegates work to varying numbers of worker nodes, in the form of files from commits to a Github repository.
+TODO: figure out if this will be a <b>work-stealing</b> rather than <b>work-delegation</b> pattern.
 
 ## Dependencies
 * Radon, used to calculate cyclomatic complexity: http://radon.readthedocs.io/en/latest/api.html#module-radon.complexity
