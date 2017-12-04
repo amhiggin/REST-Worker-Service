@@ -56,11 +56,12 @@ def get_are_files_remaining(commits_list, current_commit_index):
 
 
 def get_files_at_commit(commit, repo_path):
-    print 'In get_files_at_commit method. Getting commit number {0}'.format(commit)
+    print 'In get_files_at_commit method. Getting commit {0}'.format(commit)
 
     # get the commit first
     repo = Repo(repo_path)
-    repo.checkout(commit)
+    git = repo.git
+    git.checkout(commit)
 
     # then get the files for that commit
     return extract_python_files_for_commit(repo_path)
