@@ -12,17 +12,20 @@ from radon.cli.harvest import CCHarvester
 MANAGER_URL = "http://127.0.0.1:5000"
 WORKER_REGISTRATION_URL = "http://127.0.0.1:5000/register_worker"
 WORKER_ID = ""
+ROOT_DIR = "WorkerDir"
 
 class Worker(object):
 
     def __init__(self):
         self.running = True
+        self.worker_id = register_worker()
+        self.repo = utils.get_git_repository(ROOT_DIR + WORKER_ID)
 
     # fetches work from the manager
     def fetch_work(self):
         utils.print_to_console('Worker' + WORKER_ID, 'In fetch_work method')
         while(self.running):
-            work = requests.get(MANAGER_URL, json={"worker_id": worker})
+            work = requests.get(MANAGER_URL, json={"worker_id": WORKER_ID})
             if work.json()['running'] is False:
                 self.running = False
             if work is not None:
@@ -35,7 +38,7 @@ class Worker(object):
         utils.print_to_console('Worker' + WORKER_ID, 'In do_work method')
         total_complexity = 0
         num_files_assessed = 0
-        file_names = utils.get_files_at_commit(commit)
+        file_names = utils.get_files_at_commit(commit) # TODO implement
         for file_name in file_names:
             total_complexity += self.calculate_file_complexity(file_name)
             num_files_assessed += 1
@@ -65,11 +68,11 @@ def register_worker():
     response = requests.get(WORKER_REGISTRATION_URL, json={'registration_request': True})
     worker_id = response.json()['worker_id']
     if worker_id is not None:
-        WORKER_ID = worker_id
-    utils.print_to_console('Worker' + WORKER_ID, 'Response to request for new worker registration: {0}'.format(worker_id))
+        WORKER_ID = str(worker_id)
+    utils.print_to_console('Worker' + WORKER_ID, 'Response to request for new worker registration: {0}'.format(WORKER_ID))
+    return str(worker_id)
 
 
 if __name__ == '__main__':
     worker = Worker()
-    register_worker()
     worker.fetch_work()
