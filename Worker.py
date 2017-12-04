@@ -1,3 +1,8 @@
+'''
+Worker node, which calculates the cyclomatic complexity of a set of files given to it.
+Intention: that the worker will follow the work-stealing pattern, i..e requesting work from the manager.
+'''
+
 import os, sys, requests
 from flask_restful import Resource, Api, reqparse
 from flask import Flask, request
@@ -16,18 +21,19 @@ class Worker(object):
 
     # fetches work from the manager
     def fetch_work(self):
-        print 'In fetch_work method of worker'
+        utils.print_to_console('Worker' + WORKER_ID, 'In fetch_work method')
         while(self.running):
             work = requests.get(FETCH_WORK_FROM_MANAGER_URL, json={"worker_id": worker})
             if work.json()['running'] is False:
-                break
+                self.running = False
             if work is not None:
                 file_names = work.json()["file_names"]
-                self.do_work(file_names)
-        print 'The manager instructed us to terminate'
+                result = self.do_work(file_names)
+                response = requests.post(FETCH_WORK_FROM_MANAGER_URL, result)
+            utils.print_to_console("Worker" + WORKER_ID, 'The manager instructed us to terminate')
 
     def do_work(self, file_names):
-        print 'In do_work method of worker'
+        utils.print_to_console('Worker' + WORKER_ID, 'In do_work method')
         total_complexity = 0
         num_files_assessed = 0
         for file_name in file_names:
@@ -39,23 +45,25 @@ class Worker(object):
 
 
     def calculate_complexity(self, file_name):
-        complexity = 0
+        utils.print_to_console('Worker' + WORKER_ID, 'Calculating complexity for file {0}'.format(file_name))
+        file_complexity = 0
         file = open(file_name, 'r')
         results = CCHarvester(file_name).gobble(file)
 
         for result in results:
             print (result.complexity)
-            complexity += int(result.complexity)
+            file_complexity += int(result.complexity)
 
-        average_complexity = utils.calculate_average(complexity, len(results))
-        print "Total complexity of {0}: {1}".format(file_name, str(complexity))
-        print "Average complexity of {0}: {1}".format(file_name, str(average_complexity))
+        average_complexity = utils.calculate_average(file_complexity, len(results))
+        utils.print_to_console('Worker' + WORKER_ID, "Total complexity of {0}: {1}".format(file_name, str(file_complexity)))
+        utils.print_to_console('Worker' + WORKER_ID, "Average complexity of {0}: {1}".format(file_name, str(average_complexity)))
         return average_complexity
 
-def register_worker(Worker):
+
+def register_worker():
     response = requests.get(WORKER_REGISTRATION_URL, json={'registration_request': True})
     worker_id = response.json()['worker_id']
-    print 'Response to request for new worker registration: {0}'.format(worker_id)
+    utils.print_to_console('Worker' + WORKER_ID, 'Response to request for new worker registration: {0}'.format(worker_id))
     return worker_id
 
 
@@ -63,5 +71,4 @@ if __name__ == '__main__':
     global WORKER_ID
     worker = Worker()
     WORKER_ID = register_worker(worker)
-    utils.clone_repository()
     worker.fetch_work()
