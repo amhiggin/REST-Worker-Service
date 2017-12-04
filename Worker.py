@@ -51,7 +51,7 @@ class Worker(object):
         results = CCHarvester(file_name).gobble(file)
 
         for result in results:
-            print (result.complexity)
+            print result.complexity
             file_complexity += int(result.complexity)
 
         average_complexity = utils.calculate_average(file_complexity, len(results))
@@ -61,6 +61,7 @@ class Worker(object):
 
 
 def register_worker():
+    global WORKER_ID
     response = requests.get(WORKER_REGISTRATION_URL, json={'registration_request': True})
     worker_id = response.json()['worker_id']
     if worker_id is not None:
