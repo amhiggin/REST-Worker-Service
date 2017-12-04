@@ -14,28 +14,22 @@ GIT_REPO_PATH = REPO_PATH + ".git"
 def print_to_console(node_name, message):
     print '{0}: {1}'.format(node_name, message)
 
-def clone_repository():
+def get_git_repository():
     print 'In clone repository method: required to clone {0}'.format(GITHUB_REPO_URL)
-    print("Checking if the git repo exists...")
     try:
         repo = Repository(GIT_REPO_PATH)
     except GitError as e:
         repo = clone_repository(GITHUB_REPO_URL, REPO_PATH)
-    print("Finished!")
 
 def get_commits_as_list():
     repo = Repository(GIT_REPO_PATH)
-    commit_list = {}
+    commit_list = []
     for commit in repo.walk(repo.head.target):
         commit_list.append(str(commit.id))
     return commit_list
 
 def calculate_average(total_complexity, num_results_assessed):
     return (total_complexity / num_results_assessed)
-
-def change_commit(url, commit_version):
-    print 'In change_commit method: required to change to commit version {0}'.format(commit_version)
-    # TODO implement
 
 def get_next_piece_of_work(commits_list, current_commit_index):
     print 'Fetching next segment of repository'
@@ -50,6 +44,8 @@ def get_are_files_remaining(commits_list, current_commit_index):
 
 def get_files_at_commit(commit):
     print 'In get_files_at_commit method'
+    repo = Repository(GIT_REPO_PATH)
+
     # FIXME implement this
 
 # used to get the start and end time of the execution

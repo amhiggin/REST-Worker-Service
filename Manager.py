@@ -51,7 +51,7 @@ api.add_resource(RegisterWorker, '/register_worker')
 if __name__ == '__main__':
     global commits_list, NUM_WORKERS
     # get repo set up first
-    utils.clone_repository()
+    utils.get_git_repository()
     commits_list = utils.get_commits_as_list()
 
     app.run(Debug=True, host='127.0.0.1', port=5000)
