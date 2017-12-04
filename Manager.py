@@ -4,6 +4,9 @@ from flask import Flask, request
 import Utilities as utils
 
 NUM_WORKERS = 0
+commits_list = {}
+current_commit_index = 0
+work_remaining = {}
 
 app = Flask(__name__)
 api = Api(app)
@@ -11,10 +14,12 @@ api = Api(app)
 class Manager(Resource):
 
     def get(self):
+        global current_commit_index
         utils.print_to_console("Manager", "In get method")
-        file_names = utils.get_next_segment_of_repository()
-        running = utils.get_are_files_remaining()
-        return {"file_names": file_names, "running": running}
+        commit = utils.get_next_piece_of_work(commits_list, current_commit_index)
+        running = utils.get_are_files_remaining(commits_list, current_commit_index)
+        current_commit_index += 1
+        return {"commit": commit, "running": running}
 
 
     def post(self):
@@ -34,6 +39,7 @@ class RegisterWorker(Resource):
         if registration_request is True:
             NUM_WORKERS += 1
             return {"worker_id": NUM_WORKERS}
+        return {"worker_id": None}
 
 
 # Add url handles for registration of worker, and general worker requests
@@ -41,13 +47,16 @@ api.add_resource(Manager, '/')
 api.add_resource(RegisterWorker, '/register_worker')
 
 
-
+# Requires the number of workers as arg[1]
 if __name__ == '__main__':
+    global commits_list, NUM_WORKERS
     # get repo set up first
     utils.clone_repository()
     commits_list = utils.get_commits_as_list()
 
     app.run(Debug=True, host='127.0.0.1', port=5000)
+    while NUM_WORKERS < sys.argv[1]:
+        pass # wait for required number of workers to join
 
     # Now start timing
     start_time = utils.get_time()

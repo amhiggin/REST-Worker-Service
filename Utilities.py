@@ -37,13 +37,20 @@ def change_commit(url, commit_version):
     print 'In change_commit method: required to change to commit version {0}'.format(commit_version)
     # TODO implement
 
-def get_next_segment_of_repository():
+def get_next_piece_of_work(commits_list, current_commit_index):
     print 'Fetching next segment of repository'
-    # TODO implement
+    return commits_list[current_commit_index]
 
-def get_are_files_remaining():
+def get_are_files_remaining(commits_list, current_commit_index):
     print 'Checking whether there are any files left to process'
-    # TODO implement
+    if current_commit_index >= len(commits_list):
+        return False
+    else:
+        return True
+
+def get_files_at_commit(commit):
+    print 'In get_files_at_commit method'
+    # FIXME implement this
 
 # used to get the start and end time of the execution
 def get_time():
