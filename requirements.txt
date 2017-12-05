@@ -1,4 +1,4 @@
 requests == 2.18.4
 Flask == 0.12.2
-Flask-RESTful == 0.3.6
+Flask-Restful == 0.3.6
 radon == 2.1.1
