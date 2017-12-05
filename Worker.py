@@ -38,9 +38,6 @@ class Worker(object):
         utils.print_to_console("Worker" + WORKER_ID, 'The manager instructed us to terminate')
 
     def do_work(self, commit):
-        # start timing
-        start_time = utils.get_time()
-
         total_complexity = 0
         num_files_assessed = 0
         file_names = utils.get_files_at_commit(commit, self.root_dir)
@@ -49,11 +46,7 @@ class Worker(object):
             num_files_assessed += 1
         average_complexity = utils.calculate_average(total_complexity, num_files_assessed)
 
-        # finish timing
-        end_time = utils.get_time()
-
-        time_taken = end_time - start_time
-        response = requests.post(MANAGER_URL, json={'average_complexity': average_complexity, 'time_taken': time_taken})
+        response = requests.post(MANAGER_URL, json={'average_complexity': average_complexity})
 
 
     def calculate_file_complexity(self, file_name):

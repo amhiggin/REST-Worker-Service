@@ -42,6 +42,7 @@ def get_commits_as_list(repo_path):
     for commit in repo.iter_commits():
         commit_list.append(str(commit))
         print 'Adding commit {0}'.format(str(commit))
+    print_to_console("Manager", "There are {0} commits".format(len(commit_list)))
     return commit_list
 
 
