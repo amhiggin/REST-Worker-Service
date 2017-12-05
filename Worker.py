@@ -27,7 +27,7 @@ class Worker(object):
         utils.print_to_console('Worker' + WORKER_ID, 'In fetch_work method')
         while(self.running):
             work = requests.get(MANAGER_URL, json={"worker_id": WORKER_ID})
-            if work.json()['running'] is False:
+            if work.json()["running"] is "False":
                 self.running = False
             if work is not None:
                 commit = work.json()["commit"]
@@ -52,7 +52,9 @@ class Worker(object):
         end_time = utils.get_time()
 
         time_taken = end_time - start_time
-        return {'file_names': file_names, "average_complexity": average_complexity, "time_taken": time_taken}
+        utils.print_to_console('Worker' + WORKER_ID, "Time taken for this commit was: " + str(time_taken))
+        utils.print_to_console('Worker' + WORKER_ID, "Average complexity for this commit was: " + str(average_complexity))
+        return {"average_complexity": average_complexity, "time_taken": time_taken}
 
 
     def calculate_file_complexity(self, file_name):

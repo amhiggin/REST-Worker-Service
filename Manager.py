@@ -25,11 +25,11 @@ class Manager(Resource):
         global current_commit_index, commits_list
 
         utils.print_to_console("Manager", "In get method")
-        running = utils.get_are_files_remaining(commits_list, current_commit_index)
+        running = utils.get_outstanding_commits(commits_list, current_commit_index)
         if not running:
             utils.print_to_console("Manager", "There are no more commits. Running == False now.")
             utils.output_results(NUM_WORKERS, total_time, complexity_results)
-            return {"commit": -1, "running": False}
+            return {"commit": -1, "running": "False"}
         else:
             commit = utils.get_next_piece_of_work(commits_list, current_commit_index)
             current_commit_index += 1

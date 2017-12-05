@@ -9,7 +9,7 @@ from radon.cli import Config
 from radon.complexity import cc_rank, SCORE
 
 GITHUB_REPO_COMMITS_URL = "http://api.github.com/repos/amhiggin/DistributedFileSystem/commits"
-GITHUB_REPO_URL = "https://github.com/amhiggin/DistributedFileSystem"
+GITHUB_REPO_URL = "https://bitbucket.org/Breandan96/cs4400distributedfileserver"
 
 
 def print_to_console(node_name, message):
@@ -56,13 +56,13 @@ def get_next_piece_of_work(commits_list, current_commit_index):
     return commits_list[current_commit_index]
 
 
-def get_are_files_remaining(commits_list, current_commit_index):
+def get_outstanding_commits(commits_list, current_commit_index):
     print 'Checking whether there are any files left to process'
     if current_commit_index >= len(commits_list):
-        print 'There are no files remaining: returning False'
+        print 'There are no commits remaining'
         return False
     else:
-        print 'There are still files left: returning True'
+        print 'There are still commits remaining'
         return True
 
 
