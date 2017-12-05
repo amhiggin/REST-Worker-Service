@@ -3,7 +3,7 @@ Worker node, which calculates the cyclomatic complexity of a set of files given 
 Intention: that the worker will follow the work-stealing pattern, i..e requesting work from the manager.
 '''
 
-import os, sys, requests
+import requests
 from flask_restful import Resource, Api, reqparse
 from flask import Flask, request
 import Utilities as utils

@@ -1,8 +1,6 @@
-import threading, os, sys
 from flask_restful import Resource, Api, reqparse
 from flask import Flask, request, jsonify
 import Utilities as utils
-import json
 
 NUM_WORKERS = 0
 ROOT_DIR = "ManagerDir"
