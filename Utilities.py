@@ -50,24 +50,21 @@ def calculate_average(total_complexity, num_results_assessed):
 
 
 def get_next_piece_of_work(commits_list, current_commit_index):
-    print 'Fetching next segment of repository'
-    print 'Commits list has {0} commits in it, we are going to get number {1}'.format(len(commits_list), str(current_commit_index))
+    print 'Fetching commit {0}'.format(str(current_commit_index))
 
     return commits_list[current_commit_index]
 
 
 def get_outstanding_commits(commits_list, current_commit_index):
-    print 'Checking whether there are any files left to process'
     if current_commit_index >= len(commits_list):
         print 'There are no commits remaining'
         return False
     else:
-        print 'There are still commits remaining'
         return True
 
 
 def get_files_at_commit(commit, repo_path):
-    print 'In get_files_at_commit method. Getting commit {0}'.format(commit)
+    print 'Checking out repo at commit {0}'.format(commit)
 
     # get the commit first
     repo = Repo(repo_path)
@@ -98,10 +95,10 @@ def output_results(num_workers, total_time, complexity_results):
     print_to_console("Manager", "Outputting final results for complexity calculation")
     total_complexity = 0
     for result in complexity_results:
-        total_complexity += result[0]
+        total_complexity += int(result)
     average_complexity = calculate_average(total_complexity, len(complexity_results))
 
-    result = 'Workers: {0} \tAverage Complexity: {1} \tTime: {2}'.format(num_workers, average_complexity, total_time)
+    result = 'Workers: {0} \tAverage Complexity: {1} \tTime: {2}\n'.format(num_workers, average_complexity, total_time)
     print result
     # output as appendage to file
     with open('complexity_results.txt', 'a') as output_file:

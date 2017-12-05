@@ -24,25 +24,26 @@ class Worker(object):
 
     # fetches work from the manager
     def fetch_work(self):
-        utils.print_to_console('Worker' + WORKER_ID, 'In fetch_work method')
         while(self.running):
             work = requests.get(MANAGER_URL, json={"worker_id": WORKER_ID})
-            if work.json()["running"] is "False":
+            if work.json()['running'] is "False":
                 self.running = False
+                break
             if work is not None:
-                commit = work.json()["commit"]
-                result = self.do_work(commit)
-                response = requests.post(MANAGER_URL, result)
+                commit = work.json()['commit']
+                if commit == -1:
+                    self.running = False
+                    break
+                self.do_work(commit)
         utils.print_to_console("Worker" + WORKER_ID, 'The manager instructed us to terminate')
 
     def do_work(self, commit):
         # start timing
         start_time = utils.get_time()
 
-        utils.print_to_console('Worker' + WORKER_ID, 'In do_work method')
         total_complexity = 0
         num_files_assessed = 0
-        file_names = utils.get_files_at_commit(commit, self.root_dir) # TODO implement
+        file_names = utils.get_files_at_commit(commit, self.root_dir)
         for file_name in file_names:
             total_complexity += self.calculate_file_complexity(file_name)
             num_files_assessed += 1
@@ -52,9 +53,7 @@ class Worker(object):
         end_time = utils.get_time()
 
         time_taken = end_time - start_time
-        utils.print_to_console('Worker' + WORKER_ID, "Time taken for this commit was: " + str(time_taken))
-        utils.print_to_console('Worker' + WORKER_ID, "Average complexity for this commit was: " + str(average_complexity))
-        return {"average_complexity": average_complexity, "time_taken": time_taken}
+        response = requests.post(MANAGER_URL, json={'average_complexity': average_complexity, 'time_taken': time_taken})
 
 
     def calculate_file_complexity(self, file_name):
@@ -64,7 +63,6 @@ class Worker(object):
         results = CCHarvester(file_name, utils.get_CCHarvester_config()).gobble(file)
 
         for result in results:
-            print result.complexity
             file_complexity += int(result.complexity)
 
         utils.print_to_console('Worker' + WORKER_ID, "Total complexity of {0}: {1}".format(file_name, str(file_complexity)))
@@ -77,7 +75,6 @@ def register_worker():
     worker_id = response.json()['worker_id']
     if worker_id is not None:
         WORKER_ID = str(worker_id)
-    utils.print_to_console('Worker' + WORKER_ID, 'Response to request for new worker registration: {0}'.format(WORKER_ID))
     return str(worker_id)
 
 
