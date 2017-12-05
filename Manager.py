@@ -41,9 +41,8 @@ class Manager(Resource):
         global total_time
 
         utils.print_to_console("Manager", 'In post method')
-        work_response = request.get_json()
-        average_complexity = work_response.json()['average_complexity']
-        time_taken = work_response.json()['time_taken']
+        time_taken = request.json()['time_taken']
+        average_complexity = request.json()['average_complexity']
         # record this in our array of results for each commit
         complexity_results.append(average_complexity)
         total_time += time_taken

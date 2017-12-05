@@ -8,8 +8,8 @@ from os import walk
 from radon.cli import Config
 from radon.complexity import cc_rank, SCORE
 
-GITHUB_REPO_COMMITS_URL = "http://api.github.com/repos/amhiggin/WebProxyServer/commits"
-GITHUB_REPO_URL = "https://github.com/amhiggin/WebProxyServer"
+GITHUB_REPO_COMMITS_URL = "http://api.github.com/repos/amhiggin/DistributedFileSystem/commits"
+GITHUB_REPO_URL = "https://github.com/amhiggin/DistributedFileSystem"
 
 
 def print_to_console(node_name, message):
@@ -84,7 +84,7 @@ def extract_python_files_for_commit(repo_path):
     for (dirpath, dirnames, filenames) in walk(repo_path):
         for filename in filenames:
             # filter on python files (these are the only ones we are interested in)
-            if '.py' in filename:
+            if '.py' in filename and not '.pyc' in filename:
                 files.append(dirpath + '/' + filename)
     return files
 
