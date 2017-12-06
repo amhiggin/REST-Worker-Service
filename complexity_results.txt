@@ -1,0 +1,5 @@
+Workers: 1 	Average Complexity: 14 	Time: 6.08899998665
+Workers: 2 	Average Complexity: 14 	Time: 5.40200018883
+Workers: 3 	Average Complexity: 14 	Time: 4.22799992561
+Workers: 4 	Average Complexity: 14 	Time: 3.81900000572
+Workers: 5 	Average Complexity: 14 	Time: 3.64700007439

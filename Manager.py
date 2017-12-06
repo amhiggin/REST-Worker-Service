@@ -41,7 +41,7 @@ class Manager(Resource):
             check_if_workers_terminated_and_shutdown()
             return {"commit": -1, "running": "False"}
         else:
-            if NUM_WORKERS != (int(required_num_workers) - 1):
+            if NUM_WORKERS != int(required_num_workers):
                 commit = -2
             else:
                 commit = utils.get_next_piece_of_work(commits_list, current_commit_index)
