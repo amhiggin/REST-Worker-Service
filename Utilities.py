@@ -3,20 +3,32 @@
 import time, os, sys
 
 from git import Repo
+import stat
 from os import walk
 from radon.cli import Config
 from radon.complexity import cc_rank, SCORE
+import shutil
 
-GITHUB_REPO_URL = "https://github.com/ms-iot/python"
+GITHUB_REPO_URL = "https://github.com/mahaveerverma/hand-gesture-recognition-opencv/"
 results_output_file = 'complexity_results.txt'
+MANAGER_DIR = 'ManagerDir/'
+GENERIC_CLIENT_DIR = 'ClientDir'
 
 def print_to_console(node_name, message):
     print '{0}: {1}'.format(node_name, message)
 
-# FIXME finish implementing
-def clean_up_before_init():
+def clean_up_before_init(num_workers):
     print 'Cleaning up before initialising the system'
-    # Should delete dirs ManagerDir, WorkerDirX, etc
+    if os.path.isdir(MANAGER_DIR) and os.path.exists(MANAGER_DIR):
+        os.chmod(MANAGER_DIR, 0o777)
+        shutil.rmtree(MANAGER_DIR)
+        print_to_console("Manager", "Removed {0}".format(MANAGER_DIR))
+    for i in num_workers:
+        client_dir = GENERIC_CLIENT_DIR + str(i) + "/"
+        if os.path.isdir(client_dir) and os.path.exists(client_dir):
+            os.chmod(client_dir, stat.S_IWRITE)
+            shutil.rmtree(client_dir)
+            print 'Removed {0}'.format(client_dir)
 
 def get_CCHarvester_config():
     # Obtained from https://github.com/rubik/radon/blob/master/radon/cli/__init__.py#L16
@@ -49,6 +61,8 @@ def get_commits_as_list(repo_path):
 
 
 def calculate_average(total_complexity, num_results_assessed):
+    if num_results_assessed is 0:
+        return 0
     return (total_complexity / num_results_assessed)
 
 

@@ -6,6 +6,8 @@ Intention: that the worker will follow the work-stealing pattern, i..e requestin
 import requests
 from flask_restful import Resource, Api, reqparse
 from flask import Flask, request
+from pip._vendor.requests import ConnectionError
+
 import Utilities as utils
 from radon.cli.harvest import CCHarvester
 
@@ -17,10 +19,16 @@ ROOT_DIR = "WorkerDir"
 class Worker(object):
 
     def __init__(self):
-        self.running = True
-        self.worker_id = register_worker()
+        while True:
+            try:
+                self.worker_id = register_worker()
+                break
+            except:
+                # probably just waiting for the manager to finish starting up
+                pass
         self.root_dir = ROOT_DIR + WORKER_ID
         self.repo = utils.get_git_repository(self.root_dir)
+        self.running = True
 
     # fetches work from the manager
     def fetch_work(self):
@@ -34,8 +42,13 @@ class Worker(object):
                 if commit == -1:
                     self.running = False
                     break
-                self.do_work(commit)
-        utils.print_to_console("Worker" + WORKER_ID, 'The manager instructed us to terminate')
+                elif commit == -2:
+                    # we are waiting for all workers to join
+                    pass
+                else:
+                    self.do_work(commit)
+
+    utils.print_to_console("Worker" + WORKER_ID, 'The manager instructed us to terminate')
 
     def do_work(self, commit):
         total_complexity = 0

@@ -1,6 +1,7 @@
 from flask_restful import Resource, Api, reqparse
 from flask import Flask, request, jsonify
 import Utilities as utils
+import sys
 
 NUM_WORKERS = 0
 ROOT_DIR = "ManagerDir"
@@ -27,7 +28,7 @@ class Manager(Resource):
         global current_commit_index, commits_list, finished, start_time
 
         # start timing if this is the first request
-        if current_commit_index == 0:
+        if current_commit_index == 0 and int(required_num_workers) == NUM_WORKERS:
             start_time = utils.get_time()
             print 'Started timing at {0}'.format(str(start_time))
 
@@ -40,8 +41,12 @@ class Manager(Resource):
             check_if_workers_terminated_and_shutdown()
             return {"commit": -1, "running": "False"}
         else:
-            commit = utils.get_next_piece_of_work(commits_list, current_commit_index)
-            current_commit_index += 1
+            if NUM_WORKERS == (int(required_num_workers) - 1):
+                commit = -2
+            else:
+                commit = utils.get_next_piece_of_work(commits_list, current_commit_index)
+                current_commit_index += 1
+                # still waiting for all workers to join: send back commit == -2
             return {"commit": commit, "running": running}
 
 
@@ -70,10 +75,6 @@ class RegisterWorker(Resource):
         else:
             response = {"worker_id": None}
 
-        # wait until all workers have joined
-        ''' while not NUM_WORKERS == required_num:
-            pass
-        '''
         return response
 
 
@@ -97,15 +98,17 @@ api.add_resource(RegisterWorker, '/register_worker')
 
 
 if __name__ == '__main__':
-    global commits_list, complexity_results, NUM_WORKERS, repository, total_time, finished, start_time, end_time
+    global commits_list, complexity_results, NUM_WORKERS, repository, total_time, finished, start_time, end_time, required_num_workers
 
-    # TODO some cleanup of any previous files
-    utils.clean_up_before_init()
+    # Some cleanup of any previous files
+    required_num_workers = sys.argv[1]
+    utils.clean_up_before_init(required_num_workers)
     # get repo set up first
     repository = utils.get_git_repository(ROOT_DIR)
     commits_list = utils.get_commits_as_list(ROOT_DIR)
 
     app.run(host='127.0.0.1', port=5000, debug=False)
+
 
     total_time = end_time - start_time
 
