@@ -47,7 +47,7 @@ class Worker(object):
                 else:
                     self.do_work(commit)
 
-    utils.print_to_console("Worker" + WORKER_ID, 'The manager instructed us to terminate')
+        utils.print_to_console("Worker" + WORKER_ID, 'The manager instructed us to terminate')
 
     def do_work(self, commit):
         total_complexity = 0
