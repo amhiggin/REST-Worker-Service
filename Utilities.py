@@ -23,7 +23,7 @@ def clean_up_before_init(num_workers):
         os.chmod(MANAGER_DIR, 0o755)
         shutil.rmtree(MANAGER_DIR)
         print_to_console("Manager", "Removed {0}".format(MANAGER_DIR))
-    for i in range (0, num_workers):
+    for i in range (0, int(num_workers)):
         worker_dir = GENERIC_WORKER_DIR + str(i) + "/"
         if os.path.isdir(worker_dir) and os.path.exists(worker_dir):
             os.chmod(worker_dir, 0o755)
