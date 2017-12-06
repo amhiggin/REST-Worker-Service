@@ -1,6 +1,7 @@
 #!/bin/sh
 
-for i in {1..$1}
+for i in $( seq 2 $1 )
 do
-	python Worker.py
+	python Worker.py &
 done
+python Worker.py
