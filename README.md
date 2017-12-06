@@ -1,6 +1,8 @@
 # RESTServiceSystem
 <b>Amber Higgins, M.A.I. Computer Engineering, 13327954. For CS7NS1 Scalable Computing, TCD.</b>
+<b>Task</b>: <i>	To construct a REST service system, focussed on the efficient computation of code complexity for a given repository, utilising a set of nodes as appropriate to minimise execution time from submission to result return.</i>
 
+## Distributed RESTful System
 A REST system. A management node gives work to worker nodes, which request more work once they are finished - the <i>work-stealing pattern</i>. Work is the calculation of the average cyclomatic complexity (CC) for each commit in a Github repository.
 
 ### Manager
