@@ -12,7 +12,7 @@ import shutil
 GITHUB_REPO_URL = "https://github.com/mahaveerverma/hand-gesture-recognition-opencv/"
 results_output_file = 'complexity_results.txt'
 MANAGER_DIR = 'ManagerDir/'
-GENERIC_CLIENT_DIR = 'ClientDir'
+GENERIC_WORKER_DIR = 'WorkerDir'
 
 def print_to_console(node_name, message):
     print '{0}: {1}'.format(node_name, message)
@@ -24,11 +24,11 @@ def clean_up_before_init(num_workers):
         shutil.rmtree(MANAGER_DIR)
         print_to_console("Manager", "Removed {0}".format(MANAGER_DIR))
     for i in num_workers:
-        client_dir = GENERIC_CLIENT_DIR + str(i) + "/"
-        if os.path.isdir(client_dir) and os.path.exists(client_dir):
-            os.chmod(client_dir, 0o755)
-            shutil.rmtree(client_dir)
-            print 'Removed {0}'.format(client_dir)
+        worker_dir = GENERIC_WORKER_DIR + str(i) + "/"
+        if os.path.isdir(worker_dir) and os.path.exists(worker_dir):
+            os.chmod(worker_dir, 0o755)
+            shutil.rmtree(worker_dir)
+            print 'Removed {0}'.format(worker_dir)
 
 def get_CCHarvester_config():
     # Obtained from https://github.com/rubik/radon/blob/master/radon/cli/__init__.py#L16
