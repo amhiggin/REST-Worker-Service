@@ -20,13 +20,13 @@ def print_to_console(node_name, message):
 def clean_up_before_init(num_workers):
     print 'Cleaning up before initialising the system'
     if os.path.isdir(MANAGER_DIR) and os.path.exists(MANAGER_DIR):
-        os.chmod(MANAGER_DIR, 0o777)
+        os.chmod(MANAGER_DIR, 0o755)
         shutil.rmtree(MANAGER_DIR)
         print_to_console("Manager", "Removed {0}".format(MANAGER_DIR))
     for i in num_workers:
         client_dir = GENERIC_CLIENT_DIR + str(i) + "/"
         if os.path.isdir(client_dir) and os.path.exists(client_dir):
-            os.chmod(client_dir, stat.S_IWRITE)
+            os.chmod(client_dir, 0o755)
             shutil.rmtree(client_dir)
             print 'Removed {0}'.format(client_dir)
 
