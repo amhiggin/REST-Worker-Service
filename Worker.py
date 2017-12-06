@@ -6,7 +6,6 @@ Intention: that the worker will follow the work-stealing pattern, i..e requestin
 import requests
 from flask_restful import Resource, Api, reqparse
 from flask import Flask, request
-from pip._vendor.requests import ConnectionError
 
 import Utilities as utils
 from radon.cli.harvest import CCHarvester
