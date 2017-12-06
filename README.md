@@ -1,9 +1,12 @@
 # RESTServiceSystem
 <b>Amber Higgins, M.A.I. Computer Engineering, 13327954. For CS7NS1 Scalable Computing, TCD.</b>
-<b>Task</b>: <i>	To construct a REST service system, focussed on the efficient computation of code complexity for a given repository, utilising a set of nodes as appropriate to minimise execution time from submission to result return.</i>
+
+<b>Task</b>: <i>"To construct a REST service system, focussed on the efficient computation of code complexity for a given repository, utilising a set of nodes as appropriate to minimise execution time from submission to result return".</i>
 
 ## Distributed RESTful System
-A REST system. A management node gives work to worker nodes, which request more work once they are finished - the <i>work-stealing pattern</i>. Work is the calculation of the average cyclomatic complexity (CC) for each commit in a Github repository.
+A RESTful service to calculate the Cyclomatic Complexity (CC) of a Github repository. 
+
+A management node gives work to worker nodes, which request more work once they are finished - the <i>work-stealing pattern</i>. Work is the calculation of the average cyclomatic complexity (CC) for each commit.
 
 ### Manager
 Listens for requests from worker nodes, and gives each node a commit to calculate the average CC for.
@@ -19,6 +22,19 @@ Listens for requests from worker nodes, and gives each node a commit to calculat
     * Register itself with the manager;
     * Poll the manager until work is given to it. A delay here may occur where the manager is waiting for the required number of workers to register with it;
     * Once there are sufficient workers, each worker requests work until there is no work left to do.  In this case, the Manager will send {'running': False} as JSON to instruct the Worker to finish executing.
+
+## Launch Instructions
+### Launch Manager
+The <i>launch_manager.sh</i> script is used to launch the Manager node. This should be run before the workers are launched.
+* The script takes <b>num_required_workers</b> as <b>$1</b> (command line argument).
+* All dependencies are installed by this script, before launching the Manager node.
+
+<b>Note:</b> There is an issue with access permissions for the cleanup() method used by the Manager node on start-up. This means that when using Windows, between subsequent runnings of the scripts the user should manually delete the dirs <i>ManagerDir/</i> and all <i>WorkerDirX</i>s.
+
+### Launch Workers
+The <i>launch_workers.sh</i> script is used to launch a number of Worker nodes. This should be run after the Manager has been launched.
+* The script takes the number of workers as as <b>$1</b>, similarly to the <i>launch_manager.sh</i> script.
+* Each of the workers is then launched in succession.
 
 ## Dependencies
 Dependencies are listed in <b>requirements.txt</b>, and are installed as part of the launch script. <b>TODO insert the updated name of the launch script</b>.
