@@ -1,5 +1,0 @@
-Workers: 1 	Average Complexity: 13 	Time: 19.5379998684
-Workers: 2 	Average Complexity: 13 	Time: 15.618999958
-Workers: 3 	Average Complexity: 13 	Time: 12.7569999695
-Workers: 3 	Average Complexity: 13 	Time: 9.59200000763
-Workers: 1 	Average Complexity: 13 	Time: 23.3049998283

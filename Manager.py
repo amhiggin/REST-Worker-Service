@@ -14,6 +14,8 @@ workers_terminated = 0
 
 # results variables
 complexity_results = []
+start_time = 0.0
+end_time = 0.0
 total_time = 0.0
 
 app = Flask(__name__)
@@ -22,7 +24,12 @@ api = Api(app)
 class Manager(Resource):
 
     def get(self):
-        global current_commit_index, commits_list, finished
+        global current_commit_index, commits_list, finished, start_time
+
+        # start timing if this is the first request
+        if current_commit_index == 0:
+            start_time = utils.get_time()
+            print 'Started timing at {0}'.format(str(start_time))
 
         running = utils.get_outstanding_commits(commits_list, current_commit_index)
         if not running and finished is False:
@@ -39,12 +46,17 @@ class Manager(Resource):
 
 
     def post(self):
-        global complexity_results
+        global complexity_results, end_time
 
         response = request.get_json()
         average_complexity = response['average_complexity']
         # record this in our array of results for each commit
         complexity_results.append(average_complexity)
+
+        # check if this is the last post, i.e. stop timing
+        if len(complexity_results) == len(commits_list):
+            end_time = utils.get_time()
+            print 'Finished timing at '.format(str(end_time))
 
 class RegisterWorker(Resource):
 
@@ -57,6 +69,11 @@ class RegisterWorker(Resource):
             utils.print_to_console('RegisterWorker:', 'Registered new worker {0}'.format(NUM_WORKERS))
         else:
             response = {"worker_id": None}
+
+        # wait until all workers have joined
+        ''' while not NUM_WORKERS == required_num:
+            pass
+        '''
         return response
 
 
@@ -79,17 +96,16 @@ api.add_resource(Manager, '/')
 api.add_resource(RegisterWorker, '/register_worker')
 
 
-# Requires the number of workers as arg[1]
 if __name__ == '__main__':
-    global commits_list, complexity_results, NUM_WORKERS, repository, total_time, finished
+    global commits_list, complexity_results, NUM_WORKERS, repository, total_time, finished, start_time, end_time
 
+    # TODO some cleanup of any previous files
+    utils.clean_up_before_init()
     # get repo set up first
     repository = utils.get_git_repository(ROOT_DIR)
     commits_list = utils.get_commits_as_list(ROOT_DIR)
 
-    start_time = utils.get_time()
     app.run(host='127.0.0.1', port=5000, debug=False)
-    end_time = utils.get_time()
 
     total_time = end_time - start_time
 

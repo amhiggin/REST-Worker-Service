@@ -1,6 +1,5 @@
 # This class will be used for generic Git methods
 # These methods will probably need to be called by both Workers and Manager
-# TODO implement
 import time, os, sys
 
 from git import Repo
@@ -8,13 +7,16 @@ from os import walk
 from radon.cli import Config
 from radon.complexity import cc_rank, SCORE
 
-GITHUB_REPO_COMMITS_URL = "http://api.github.com/repos/amhiggin/DistributedFileSystem/commits"
-GITHUB_REPO_URL = "https://bitbucket.org/Breandan96/cs4400distributedfileserver"
-
+GITHUB_REPO_URL = "https://github.com/ms-iot/python"
+results_output_file = 'complexity_results.txt'
 
 def print_to_console(node_name, message):
     print '{0}: {1}'.format(node_name, message)
 
+# FIXME finish implementing
+def clean_up_before_init():
+    print 'Cleaning up before initialising the system'
+    # Should delete dirs ManagerDir, WorkerDirX, etc
 
 def get_CCHarvester_config():
     # Obtained from https://github.com/rubik/radon/blob/master/radon/cli/__init__.py#L16
@@ -102,5 +104,5 @@ def output_results(num_workers, total_time, complexity_results):
     result = 'Workers: {0} \tAverage Complexity: {1} \tTime: {2}\n'.format(num_workers, average_complexity, total_time)
     print result
     # output as appendage to file
-    with open('complexity_results.txt', 'a') as output_file:
+    with open(results_output_file, 'a+') as output_file:
         output_file.write(result)
