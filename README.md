@@ -1,4 +1,6 @@
 # RESTServiceSystem
+<b>Amber Higgins, M.A.I. Computer Engineering, 13327954</b>
+
 A REST system. A management node gives work to worker nodes, which request more work once they are finished - the <i>work-stealing pattern</i>. Work is the calculation of the average cyclomatic complexity for each commit in a Github repository.
 
 ### Manager
