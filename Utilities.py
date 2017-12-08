@@ -9,7 +9,7 @@ from radon.cli import Config
 from radon.complexity import cc_rank, SCORE
 import shutil
 
-GITHUB_REPO_URL = "https://github.com/mahaveerverma/hand-gesture-recognition-opencv/"
+GITHUB_REPO_URL = "https://github.com/MisterBianco/BoopSuite"
 results_output_file = 'complexity_results.txt'
 MANAGER_DIR = 'ManagerDir/'
 GENERIC_WORKER_DIR = 'WorkerDir'
