@@ -19,14 +19,14 @@ Upon start-up, the Manager:
 
 A screenshot of the server starting up for <b>required_num_workers = 5</b> is shown below.
 
-![server_init](https://github.com/amhiggin/RESTServiceSystem/tree/master/Screenshots/Initialisation%20and%20operation%20of%205%20worker%20nodes.PNG)
+![server_init](https://github.com/amhiggin/RESTServiceSystem/blob/master/Results%20and%20Screenshots/Initialising%20manager%20from%20launch_manager.sh%20script.PNG)
 
 Once it has received all of the results for all of the delegated work, it:
 * Terminates the workers;
 * Averages the results returned by all of the workers;
 * Writes the result to the file <b>complexity_results.txt</b>. 
 
-![server_exit](https://github.com/amhiggin/RESTServiceSystem/blob/master/Screenshots/Outputting%20of%20calculation%20results%20to%20file%20from%20Manager.PNG)
+![server_exit](https://github.com/amhiggin/RESTServiceSystem/blob/master/Results%20and%20Screenshots/Outputting%20of%20calculation%20results%20to%20file%20from%20Manager.PNG)
 
 ### Worker
 Requests work from the Manager, and operates on the delegated work item it is assigned before sending the result back to the Manager. Calculates the CC for <u>each file</u> in a commit specified by the Manager, using the Radon Python CC Library. It then calculates and returns the average complexity over the whole commit, to the Manager. This is the 'work' that it carries out.
@@ -38,7 +38,7 @@ Requests work from the Manager, and operates on the delegated work item it is as
     * Thereafter, once there are sufficient workers registered, each worker completes and requests delegated work items until there is no work left to do.  
     * When all work has been completed, the Manager will send {'running': False} as JSON to instruct the Worker to finish executing. It is at this point that the Worker terminates.
     
-![worker_operation](https://github.com/amhiggin/RESTServiceSystem/blob/master/Screenshots/Initialisation%20and%20operation%20of%205%20worker%20nodes.PNG)
+![worker_operation](https://github.com/amhiggin/RESTServiceSystem/blob/master/Results%20and%20Screenshots/Initialisation%20and%20operation%20of%205%20worker%20nodes.PNG)
     
 #### Some subtleties:
 * Each worker clones its own copy of the repository in order to simplify the issue of conflicts. This does result in more time to launch the workers, but doesn't directly impact on the time taken to execute the cyclomatic complexity of the repository since this is only measured from when all workers are ready.
