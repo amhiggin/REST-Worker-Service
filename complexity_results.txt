@@ -1,2 +1,5 @@
-Workers: 1 	Average Complexity: 22 	Time: 24.5180001259
-Workers: 1 	Average Complexity: 22 	Time: 22.9189999104
+Workers: 5      Average Complexity: 22  Time: 33.8732340336
+Workers: 4      Average Complexity: 22  Time: 37.5123238564
+Workers: 3      Average Complexity: 22  Time: 52.7732498646
+Workers: 2      Average Complexity: 22  Time: 67.7227909565
+Workers: 1      Average Complexity: 22  Time: 121.416260004

@@ -45,6 +45,18 @@ Requests work from the Manager, and operates on the delegated work item it is as
 #### Some subtleties:
 * Each worker clones its own copy of the repository in order to simplify the issue of conflicts. This does result in more time to launch the workers, but doesn't directly impact on the time taken to execute the cyclomatic complexity of the repository since this is only measured from when all workers are ready.
 * No worker will be given work until all of the expected number of workers have registered with the Manager.
+* As a resiliency measure, if a worker is launched before there is a Manager to register with, it will wait until the Manager is running rather than throwing a ConnectionException.
+
+
+## Performance Results
+As mentioned, this system was implemented using the <b>work-stealing pattern</b>. The performance results for between 1 and 5 workers are shown in the graph below.
+
+![performance_graph](https://github.com/amhiggin/RESTServiceSystem/blob/master/Results%20and%20Screenshots/Graph%20-%20Performance%20for%205%20workers.PNG)
+
+It was found that there was an inversely proportional relationship between the number of worker nodes completing the calculation, and the time taken to complete it. This is evident from the marked decrease in the amount of time required to complete the calculation, for an increasing number of nodes.
+
+At the point where 5 worker nodes are used to complete the work, it is clear that the graph is levelling off. This is because at some point, the time required to set up and manage the work-delegation for additional nodes becomes costly, and the performance cannot be improved any further.
+
 
 ## Launch Instructions
 ### Launch Manager
