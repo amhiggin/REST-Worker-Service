@@ -11,16 +11,18 @@ A management node gives work to worker nodes at the request of the worker nodes,
 ### Manager Node
 Manages the workers, listens for requests for more work, and gives each node a commit to calculate the average CC for.
 
-Once it has received all of the results for all of the delegated work, it:
-* Terminates the workers;
-* Averages the results returned;
-* Writes the result to the file <b>complexity_results.txt</b>.
-
 Upon start-up, the Manager:
 * Clones the required repository to its own root directory, <i>/ManagerDir</i>.
 * Cleans up after any previous worker nodes, i.e. deletes any existing '<i>WorkerDir</i>' directories;
 * Becomes accessible for registration of workers at <i>http://127.0.0.1:5000/register_worker</i>, and at <i>http://127.0.0.1:5000</i> for incoming requests for work.
 * Startup param includes <i>required_num_workers</i> as <b>sys.argv[1]</b>. This allows the manager to stall the provision of files to calculate the average CC for, until the required number of worker nodes have been registered.
+![server_init](https://github.com/amhiggin/RESTServiceSystem/tree/master/Screenshots/Initialisation%20and%20operation%20of%205%20worker%20nodes.PNG)
+
+Once it has received all of the results for all of the delegated work, it:
+* Terminates the workers;
+* Averages the results returned;
+* Writes the result to the file <b>complexity_results.txt</b>. 
+![server_exit](https://github.com/amhiggin/RESTServiceSystem/blob/master/Screenshots/Outputting%20of%20calculation%20results%20to%20file%20from%20Manager.PNG)
 
 ### Worker
 Requests work from the Manager, and operates on the delegated work item before sending the result back to the Manager.
