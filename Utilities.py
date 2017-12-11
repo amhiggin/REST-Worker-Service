@@ -9,7 +9,8 @@ from radon.cli import Config
 from radon.complexity import cc_rank, SCORE
 import shutil
 
-GITHUB_REPO_URL = "https://github.com/MisterBianco/BoopSuite"
+# Found one of today's (12th Dec 2017) trending Python repos with no syntax errors in commits!
+GITHUB_REPO_URL = "https://github.com/PhilipTrauner/cmus-osx"
 results_output_file = 'complexity_results.txt'
 MANAGER_DIR = 'ManagerDir/'
 GENERIC_WORKER_DIR = 'WorkerDir'
