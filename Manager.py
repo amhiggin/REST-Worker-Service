@@ -98,7 +98,6 @@ api.add_resource(RegisterWorker, '/register_worker')
 
 
 if __name__ == '__main__':
-    global commits_list, complexity_results, NUM_WORKERS, repository, total_time, finished, start_time, end_time, required_num_workers
 
     # Some cleanup of any previous files
     required_num_workers = sys.argv[1]

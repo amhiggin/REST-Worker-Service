@@ -1,0 +1,2 @@
+Workers: 1 	Average Complexity: 22 	Time: 24.5180001259
+Workers: 1 	Average Complexity: 22 	Time: 22.9189999104

@@ -118,6 +118,12 @@ def output_results(num_workers, total_time, complexity_results):
 
     result = 'Workers: {0} \tAverage Complexity: {1} \tTime: {2}\n'.format(num_workers, average_complexity, total_time)
     print result
+
+    # create output file if not exists
+    if not os.path.exists(results_output_file):
+        new_file = open(results_output_file, 'w+')
+        new_file.close()
+
     # output as appendage to file
     with open(results_output_file, 'a+') as output_file:
         output_file.write(result)
