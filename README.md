@@ -61,7 +61,6 @@ At the point where 5 worker nodes are used to complete the work, it is clear tha
 The <i>launch_manager.sh</i> script is used to launch the Manager node. This should be run before the workers are launched.
 * The script takes <b>num_required_workers</b> as <b>$1</b> (command line argument).
 * All dependencies are installed by this script, before launching the Manager node. The dependencies are specified in <i>requirements.txt</i>.
-* Specifically:
 
 <b>Note:</b> There is an issue with access permissions for the cleanup() method used by the Manager node on start-up. This means that when using Windows, between subsequent runnings of the scripts the user should manually delete the dirs <i>ManagerDir/</i> and all <i>WorkerDirX</i>s to ensure that this cleanup has occurred.
 
@@ -71,7 +70,7 @@ The <i>launch_workers.sh</i> script is used to launch a number of Worker nodes. 
 * Each of the workers is then launched in succession.
 
 ## Dependencies
-Dependencies are listed in <b>requirements.txt</b>, and are installed as part of the launch script. <b>TODO insert the updated name of the launch script</b>.
+Dependencies are listed in <b>requirements.txt</b>, and are installed as part of the launch script <i>launch_manager.sh</i>. 
 * Python 2.7.9
 * Radon, used to calculate cyclomatic complexity: http://radon.readthedocs.io/en/latest/api.html#module-radon.complexity
 * Flask 0.12.2
