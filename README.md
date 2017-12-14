@@ -4,7 +4,7 @@
 <b>Task</b>: <i>"To construct a REST service system, focused on the efficient computation of code complexity for a given repository, utilising a set of nodes as appropriate to minimise execution time from submission to result return".</i>
 
 ## Distributed RESTful System
-A RESTful service to calculate the Cyclomatic Complexity (CC) of a Github repository. 
+A RESTful service to calculate the average Cyclomatic Complexity (CC) of the commits in a Github repository.
 
 A Manager node delegates work to Worker nodes, which request more work once they have completed a piece of work - the <i>work-stealing pattern</i>. 'Work' is the calculation of the average cyclomatic complexity (CC) for each commit in a Github repository.
 
@@ -45,7 +45,7 @@ Requests work from the Manager, and operates on the delegated work item it is as
 * No worker will be given work until all of the expected number of workers have registered with the Manager.
 * As a resiliency measure, if a worker is launched before there is a Manager to register with, it will wait until the Manager is running rather than throwing a ConnectionException.
 
-### Sequence of Events
+### Full Explanation of a Single Run of the Calculation
 The system operates as follows (assuming the <i>launch_manager.sh</i> and <i>launch_workers.sh</i> scripts are being used to run the application):
 1. The Manager node starts initialising the system. It has been provided with the number of workers it should expect to register.
     * First, it removes existing <i>/ManagerDir</i> and <i>WorkerDir</i> directories from any previous runs.
@@ -60,17 +60,17 @@ The system operates as follows (assuming the <i>launch_manager.sh</i> and <i>lau
     * Remember that all of the Workers start polling the Manager for work as soon as they are initialised. These Workers will be given the response <b>{"commit": -2, "running": True}</b>, telling them that there is no work available yet.
     * Once all of the required workers have registered, the Manager starts to delegate work. This is a response to the request for work in the form <b>{"commit": 0bc76a0210035540b53a8588f1b2585ee62fd691 , "running": True}</b> for example, where the 'commit' field is the hash of a commit in the respository. Since the worker has cloned the repository locally, it is able to check out it's own copy of the repository at this commit.
     * <b>NB:</b> Once the Manager knows that all of the required workers are registered, the next request for work that it receives from a worker will start the timer.
-    * Thereafter, the Workers complete work:
-        * Each worker checks out the repository at the specified commit, and fetches the files contained.
-        * It iterates over each <b>python file</b> (<i>.py</i> or <i>.pyc</i>) in the commit, calculating the cyclomatic complexity using the Radon library. This complexity is then added to a running total for the commit.
-        * Once the complexity of all of the files in the commit has been calculated, the complexity is averaged by dividing by the number of files. It is this average value that is sent back to the Worker.
-        * The cycle begins again with the Worker requesting more work.
-4. Each time the Manager receives a result from one of the Workers, it is stored in a data structure along with the results received from all other workers.
-    * The Manager continues to iterate through the commits, providing the commit hash as a response to a request for work from the Workers.
+4. Thereafter, the Workers complete work:
+   * Each worker checks out the repository at the specified commit, and fetches the files contained.
+   * It iterates over each <b>python file</b> (<i>.py</i> or <i>.pyc</i>) in the commit, calculating the cyclomatic complexity using the Radon library. This complexity is then added to a running total for the commit.
+   * Once the complexity of all of the files in the commit has been calculated, the complexity is averaged by dividing by the number of files. It is this average value that is sent back to the Worker.
+   * The cycle begins again with the Worker requesting more work.
+5. Each time the Manager receives a result from one of the Workers, it is stored in a data structure along with the results received from all other workers.
+    * The Manager continues to iterate through the commits, providing each subsequent commit hash as a response to a request for work from the Workers.
     * After the Manager has delegated all of the commits, any new requests for work will be given the response <b>{"commit": -1, "running": "False"}</b>. When received by the Worker that sent the request, the Worker will terminate.
     * <b>NB:</b> As soon as the Manager has received all of the results from the Workers, it stops the timer.
     * Once the manager knows that all of the Workers have been given a response telling them to terminate, it will terminate its service.
-5. Finally, the Manager must calculate and output the results of the operation.
+6. Finally, the Manager must calculate and output the results of the operation.
     * The Manager calculates the average cyclomatic complexity for all of the commits, by taking the sum of all the results returned by the Workers and dividing it by the number of results.
     * The Manager calculates the total time taken to run the calculation on the repository, by subtracting the <i>start_time</i> from the <i>end_time</i>.
     * Finally, the results are written out to i) the console window, and ii) a file called <b>complexity_results.txt</b>, which is created if it doesn't already exist. These results are the number of workers, the average commit complexity, and the time taken.
@@ -90,7 +90,6 @@ At the point where 13 worker nodes are used to complete the work, it is clear th
 The <i>launch_manager.sh</i> script is used to launch the Manager node. This should be run before the workers are launched.
 * The script takes <b>num_required_workers</b> as <b>$1</b> (command line argument).
 * All dependencies are installed by this script, before launching the Manager node. The dependencies are specified in <i>requirements.txt</i>.
-
 <b>Notes:</b>
 * When launching the script after previously running the application for a large number of workers, the clean-up of the existing directories may take some time. However, this doesn't impact on the execution time of the calculation.
 * There is an issue with access permissions for the cleanup() method used by the Manager node on start-up. This means that when using Windows, between subsequent runnings of the scripts the user should manually delete the dirs <i>ManagerDir/</i> and all <i>WorkerDirX</i>s to ensure that this cleanup has occurred.
@@ -100,7 +99,6 @@ The <i>launch_manager.sh</i> script is used to launch the Manager node. This sho
 The <i>launch_workers.sh</i> script is used to launch a number of Worker nodes. This should be run after the Manager has been launched.
 * The script takes the number of workers as as <b>$1</b>, similarly to the <i>launch_manager.sh</i> script.
 * Each of the workers is then launched in succession.
-
 <b>Notes:</b>
 * When launching the script for a large number of workers, the cloning of the repository for each worker and the handling of all of these workers polling the server, may slow down the start-up of the service. However, this doesn't impact on the execution time of the calculation.
 * The number of workers specified as <b>$1</b> should be the same for the <i>launch_manager.sh</i> script.
