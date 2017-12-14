@@ -18,3 +18,11 @@ Workers: 17     Average Complexity: 22  Time: 16.976074934
 Workers: 18     Average Complexity: 22  Time: 15.3067250252
 Workers: 19     Average Complexity: 22  Time: 16.7976720333
 Workers: 20     Average Complexity: 22  Time: 15.9132859707
+Workers: 21     Average Complexity: 22  Time: 17.2538850307
+Workers: 22     Average Complexity: 22  Time: 16.0006451607
+Workers: 23     Average Complexity: 22  Time: 17.8278679848
+Workers: 24     Average Complexity: 22  Time: 16.5635979176
+Workers: 25     Average Complexity: 22  Time: 16.8559310436
+Workers: 26     Average Complexity: 22  Time: 17.7479820251
+Workers: 27     Average Complexity: 22  Time: 17.3928120136
+Workers: 28     Average Complexity: 22  Time: 16.7250189781
