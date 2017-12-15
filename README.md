@@ -26,6 +26,7 @@ Once it has received all of the results for all of the delegated work, it:
 * Averages the results returned by all of the workers;
 * Writes the result to the file <b>complexity_results.txt</b>. 
 
+A screenshot below shows the outputting of results.
 ![server_exit](https://github.com/amhiggin/RESTServiceSystem/blob/master/Results%20and%20Screenshots/Outputting%20of%20calculation%20results%20to%20file%20from%20Manager.PNG)
 
 ### Worker
@@ -37,7 +38,8 @@ Requests work from the Manager, and operates on the delegated work item it is as
     * Poll the manager until work is given to it. A delay here may occur where the manager is waiting for the required number of workers to register with it.
     * Thereafter, once there are sufficient workers registered, each worker completes and requests delegated work items until there is no work left to do.  
     * When all work has been completed, the Manager will send {'running': False} as JSON to instruct the Worker to finish executing. It is at this point that the Worker terminates.
-    
+
+Below is shown a screenshot of multiple workers performing the calculation on the repository, for different commits.
 ![worker_operation](https://github.com/amhiggin/RESTServiceSystem/blob/master/Results%20and%20Screenshots/Initialisation%20and%20operation%20of%205%20worker%20nodes.PNG)
     
 #### Some subtleties:
@@ -84,12 +86,15 @@ It was found that there was an inversely proportional relationship between the n
 
 At the point where 13 worker nodes are used to complete the work, it is clear that the graph is levelling off. This is because at some point, the time required to set up and manage the work-delegation for additional nodes becomes costly, and the performance cannot be improved any further. There is slight fluctuation in the time taken for >14 workers, hovering somewhere between 15-17 seconds. This is a sign that adding more workers simply doesn't increase the performance of the calculation time any further.
 
+The Excel spreadsheet used to produce this graph is included in the repository [here](https://github.com/amhiggin/RESTServiceSystem/blob/master/Results%20and%20Screenshots/Performance%20Graph.xlsx)
+
 
 ## Launch Instructions
 ### Launch Manager
 The <i>launch_manager.sh</i> script is used to launch the Manager node. This should be run before the workers are launched.
 * The script takes <b>num_required_workers</b> as <b>$1</b> (command line argument).
 * All dependencies are installed by this script, before launching the Manager node. The dependencies are specified in <i>requirements.txt</i>.
+
 <b>Notes:</b>
 * When launching the script after previously running the application for a large number of workers, the clean-up of the existing directories may take some time. However, this doesn't impact on the execution time of the calculation.
 * There is an issue with access permissions for the cleanup() method used by the Manager node on start-up. This means that when using Windows, between subsequent runnings of the scripts the user should manually delete the dirs <i>ManagerDir/</i> and all <i>WorkerDirX</i>s to ensure that this cleanup has occurred.
@@ -99,6 +104,7 @@ The <i>launch_manager.sh</i> script is used to launch the Manager node. This sho
 The <i>launch_workers.sh</i> script is used to launch a number of Worker nodes. This should be run after the Manager has been launched.
 * The script takes the number of workers as as <b>$1</b>, similarly to the <i>launch_manager.sh</i> script.
 * Each of the workers is then launched in succession.
+
 <b>Notes:</b>
 * When launching the script for a large number of workers, the cloning of the repository for each worker and the handling of all of these workers polling the server, may slow down the start-up of the service. However, this doesn't impact on the execution time of the calculation.
 * The number of workers specified as <b>$1</b> should be the same for the <i>launch_manager.sh</i> script.
