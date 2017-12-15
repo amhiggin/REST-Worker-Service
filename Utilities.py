@@ -1,5 +1,6 @@
-# This class will be used for generic Git methods
-# These methods will probably need to be called by both Workers and Manager
+'''
+A generic utilities class used by both Manager.py and Worker.py.
+'''
 import time, os, sys
 
 from git import Repo
@@ -9,15 +10,17 @@ from radon.cli import Config
 from radon.complexity import cc_rank, SCORE
 import shutil
 
-# Found one of today's (12th Dec 2017) trending Python repos with no syntax errors in commits!
 GITHUB_REPO_URL = "https://github.com/PhilipTrauner/cmus-osx"
 results_output_file = 'complexity_results.txt'
 MANAGER_DIR = 'ManagerDir/'
 GENERIC_WORKER_DIR = 'WorkerDir'
 
+
 def print_to_console(node_name, message):
     print '{0}: {1}'.format(node_name, message)
 
+    
+# Cleans up after previous runs if applicable.
 def clean_up_before_init(num_workers):
     print 'Cleaning up before initialising the system'
     if os.path.isdir(MANAGER_DIR) and os.path.exists(MANAGER_DIR):
@@ -31,6 +34,7 @@ def clean_up_before_init(num_workers):
             shutil.rmtree(worker_dir)
             print 'Removed {0}'.format(worker_dir)
 
+# Sets up a generic config object for the Radon CCHarvester.
 def get_CCHarvester_config():
     # Obtained from https://github.com/rubik/radon/blob/master/radon/cli/__init__.py#L16
     return Config(
@@ -40,6 +44,7 @@ def get_CCHarvester_config():
     )
 
 
+# Clones the required git repository.
 def get_git_repository(repo_path):
     print 'In clone repository method: required to clone {0}'.format(GITHUB_REPO_URL)
     if not os.path.exists(repo_path):
@@ -51,6 +56,7 @@ def get_git_repository(repo_path):
     return repo
 
 
+# Gets all of the commits in a given repository, and puts them in a list.
 def get_commits_as_list(repo_path):
     repo = Repo(repo_path)
     commit_list = []
@@ -61,18 +67,21 @@ def get_commits_as_list(repo_path):
     return commit_list
 
 
+# Calculates the average
 def calculate_average(total_complexity, num_results_assessed):
     if num_results_assessed is 0:
         return 0
     return (total_complexity / num_results_assessed)
 
 
+# Indexes the next commit in the list, to be provided to a worker.
 def get_next_piece_of_work(commits_list, current_commit_index):
     print 'Fetching commit {0}'.format(str(current_commit_index))
 
     return commits_list[current_commit_index]
 
 
+# Determines whether there are any commits left to process.
 def get_outstanding_commits(commits_list, current_commit_index):
     if current_commit_index >= len(commits_list):
         print 'There are no commits remaining'
@@ -81,6 +90,7 @@ def get_outstanding_commits(commits_list, current_commit_index):
         return True
 
 
+# Checks out the git repository at the specified commit
 def get_files_at_commit(commit, repo_path):
     print 'Checking out repo at commit {0}'.format(commit)
 
@@ -93,6 +103,7 @@ def get_files_at_commit(commit, repo_path):
     return extract_python_files_for_commit(repo_path)
 
 
+# Singles out the python files from this commit (Radon cannot process non-python files).
 def extract_python_files_for_commit(repo_path):
     repo = Repo(repo_path)
     files = []
@@ -109,6 +120,7 @@ def get_time():
     return time.time()
 
 
+# Outputs the results of the computation to the console, and to the file complexity_results.txt
 def output_results(num_workers, total_time, complexity_results):
     print_to_console("Manager", "Outputting final results for complexity calculation")
     total_complexity = 0
