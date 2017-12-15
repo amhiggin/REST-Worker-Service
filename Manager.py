@@ -1,3 +1,8 @@
+'''
+A Manager node for the system, which assigns work to connected workers according to the work-stealing pattern.
+Manages the workers, delegates the work, and consolidates the results of the computation.
+'''
+
 from flask_restful import Resource, Api, reqparse
 from flask import Flask, request, jsonify
 import Utilities as utils
