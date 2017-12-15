@@ -27,11 +27,12 @@ class Manager(Resource):
     def get(self):
         global current_commit_index, commits_list, finished, start_time
 
-        # start timing if this is the first request
+        # start timing if this is the first request after all workers have registered
         if current_commit_index == 0 and int(required_num_workers) == NUM_WORKERS:
             start_time = utils.get_time()
             print 'Started timing at {0}'.format(str(start_time))
-
+        
+        # check whether there are any commits left to assign
         running = utils.get_outstanding_commits(commits_list, current_commit_index)
         if not running and finished is False:
             finished = True
@@ -42,11 +43,12 @@ class Manager(Resource):
             return {"commit": -1, "running": "False"}
         else:
             if NUM_WORKERS != int(required_num_workers):
+                # keep waiting for the other workers to register
                 commit = -2
             else:
+                # delegate the next commit to this worker
                 commit = utils.get_next_piece_of_work(commits_list, current_commit_index)
                 current_commit_index += 1
-                # still waiting for all workers to join: send back commit == -2
             return {"commit": commit, "running": running}
 
 
@@ -77,7 +79,8 @@ class RegisterWorker(Resource):
 
         return response
 
-
+    
+# This method checks whether all of the workers have been terminated, and if so calls the shutdown method.
 def check_if_workers_terminated_and_shutdown():
     global workers_terminated, NUM_WORKERS
     workers_terminated += 1
@@ -85,6 +88,8 @@ def check_if_workers_terminated_and_shutdown():
     if workers_terminated == NUM_WORKERS:
         shutdown()
 
+        
+# This method shuts down the server.
 def shutdown():
     # http://flask.pocoo.org/snippets/67/
     func = request.environ.get('werkzeug.server.shutdown')
@@ -92,6 +97,7 @@ def shutdown():
         raise RuntimeError('Not running with the Werkzeug Server')
     func()
 
+    
 # Add url handles for registration of worker, and general worker requests
 api.add_resource(Manager, '/')
 api.add_resource(RegisterWorker, '/register_worker')
@@ -102,15 +108,16 @@ if __name__ == '__main__':
     # Some cleanup of any previous files
     required_num_workers = sys.argv[1]
     utils.clean_up_before_init(required_num_workers)
+    
     # get repo set up first
     repository = utils.get_git_repository(ROOT_DIR)
     commits_list = utils.get_commits_as_list(ROOT_DIR)
 
     app.run(host='127.0.0.1', port=5000, debug=False)
 
-
+    # once the server has been shut down, we can calculate the results
     total_time = end_time - start_time
-
+    
     utils.print_to_console("Manager", "Manager finished")
     utils.output_results(NUM_WORKERS, total_time, complexity_results)
 
